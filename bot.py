@@ -26,8 +26,8 @@ threading.Thread(target=run_fake_server, daemon=True).start()
 # ==========================================
 # 2. НАСТРОЙКА БОТА И БАЗЫ ДАННЫХ
 # ==========================================
-TOKEN = "7864811802:AAH9E0CscS9R771Yp-iRzIn9-oZ17Lw8H9Q"  # Твой токен
-ADMIN_IDS = [661036070]  # Твой Telegram ID
+TOKEN = "8755450072:AAGO85vA7uUq8Af_3ZzDoKpXrvajpfbPO6Q"  # Твой токен
+ADMIN_IDS = [7287525738]  # Твой Telegram ID
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
