@@ -1,9 +1,15 @@
+# Используем легкую версию Python
 FROM python:3.10-slim
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-RUN pip install --no-cache-dir aiogram==2.23.1 aiohttp==3.8.6
+# Копируем файл зависимостей и устанавливаем их
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Копируем остальной код
 COPY . .
 
+# Команда запуска
 CMD ["python", "bot.py"]
