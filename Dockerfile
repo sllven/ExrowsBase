@@ -1,15 +1,7 @@
-# Используем легкую версию Python
 FROM python:3.10-slim
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
-
-# Копируем файл зависимостей и устанавливаем их
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Копируем остальной код
 COPY . .
-
-# Команда запуска
+# Эта команда выведет список всех файлов, которые Docker реально видит
+RUN ls -la
+RUN pip install --no-cache-dir -r requirements.txt
 CMD ["python", "bot.py"]
