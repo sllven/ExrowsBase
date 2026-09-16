@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniView AI — See the university as a student sees it.</title>
+  <meta name="description" content="Find, verify and explore real university life through trusted visual sources." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="UniView AI home">
+      <span class="brand-mark" aria-hidden="true">◆</span> UniView AI
+    </a>
+    <nav class="topnav" aria-label="Primary">
+      <button id="nav-compare" class="link-button">Compare universities</button>
+    </nav>
+  </header>
+
+  <main id="app">
+
+    <!-- ================= HOME / SEARCH VIEW ================= -->
+    <section id="view-home" class="view view-home" aria-labelledby="home-title">
+      <h1 id="home-title">UniView AI</h1>
+      <p class="tagline">See the university as a student sees it.</p>
+      <p class="subtagline">Find, verify and explore real university life through trusted visual sources.</p>
+
+      <form id="search-form" class="search-form" role="search">
+        <label for="search-input" class="sr-only">Enter any university</label>
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Enter any university…"
+          autocomplete="off"
+          spellcheck="false"
+          required
+        />
+        <button type="submit">Explore university</button>
+      </form>
+      <p class="search-hint">Powered by AI verification • Source-based results • Duplicate detection</p>
+
+      <div id="home-error" class="inline-error" role="alert" hidden></div>
+
+      <div id="home-suggestions" class="suggestion-chips" aria-label="Example universities">
+        <span>Try:</span>
+        <button type="button" data-example="MIT">MIT</button>
+        <button type="button" data-example="Stanford University">Stanford University</button>
+        <button type="button" data-example="University of Oxford">University of Oxford</button>
+        <button type="button" data-example="ETH Zurich">ETH Zurich</button>
+        <button type="button" data-example="University of Tokyo">University of Tokyo</button>
+        <button type="button" data-example="Nazarbayev University">Nazarbayev University</button>
+      </div>
+    </section>
+
+    <!-- ================= DISAMBIGUATION VIEW ================= -->
+    <section id="view-disambiguation" class="view" hidden aria-labelledby="disambig-title">
+      <h2 id="disambig-title">Which university did you mean?</h2>
+      <ul id="disambig-list" class="disambig-list"></ul>
+      <button type="button" class="text-button" data-action="back-home">← Back to search</button>
+    </section>
+
+    <!-- ================= PROGRESS VIEW ================= -->
+    <section id="view-progress" class="view" hidden aria-labelledby="progress-title">
+      <h2 id="progress-title">Researching university…</h2>
+      <div class="progress-bar-outer" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-wrap">
+        <div class="progress-bar-inner" id="progress-bar"></div>
+      </div>
+      <p class="progress-percent" id="progress-percent">0%</p>
+      <p class="progress-stage" id="progress-stage">Current stage: University identification</p>
+      <ol class="progress-steps" id="progress-steps">
+        <li data-stage="identification">University identification</li>
+        <li data-stage="sources">Source discovery</li>
+        <li data-stage="images">Image collection</li>
+        <li data-stage="dedup">Duplicate detection</li>
+        <li data-stage="verify">AI verification</li>
+        <li data-stage="categorize">Categorization</li>
+        <li data-stage="profile">Profile generation</li>
+      </ol>
+    </section>
+
+    <!-- ================= ERROR / EMPTY VIEW ================= -->
+    <section id="view-message" class="view" hidden>
+      <h2 id="message-title"></h2>
+      <p id="message-body"></p>
+      <button type="button" class="text-button" data-action="back-home">← Back to search</button>
+    </section>
+
+    <!-- ================= PROFILE VIEW ================= -->
+    <section id="view-profile" class="view" hidden>
+      <button type="button" class="text-button" data-action="back-home">← New search</button>
+
+      <div class="profile-header">
+        <div>
+          <h2 id="profile-name"></h2>
+          <p id="profile-location" class="muted"></p>
+          <p id="profile-cache-note" class="muted small" hidden></p>
+        </div>
+        <div class="confidence-badge" id="profile-confidence-badge">
+          <span class="confidence-value" id="profile-confidence-value">—</span>
+          <span class="confidence-label" id="profile-confidence-label"></span>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <a id="profile-official-link" href="#" target="_blank" rel="noopener" hidden>Official website ↗</a>
+        <button type="button" id="refresh-research-btn" class="text-button">Refresh research</button>
+        <button type="button" id="add-to-compare-btn" class="text-button">Add to comparison</button>
+      </div>
+
+      <p id="profile-description" class="profile-description"></p>
+
+      <div class="stats-row" id="profile-stats"></div>
+
+      <div class="facts-grid" id="profile-facts"></div>
+
+      <div class="filters-bar">
+        <div class="filters-scroll" id="category-filters">
+          <button data-filter-category="all" class="filter-chip active">All</button>
+          <button data-filter-category="campus" class="filter-chip">Campus</button>
+          <button data-filter-category="dormitory" class="filter-chip">Dormitory</button>
+          <button data-filter-category="library" class="filter-chip">Libraries</button>
+          <button data-filter-category="classroom" class="filter-chip">Classrooms</button>
+          <button data-filter-category="laboratory" class="filter-chip">Laboratories</button>
+          <button data-filter-category="sport" class="filter-chip">Sport</button>
+          <button data-filter-category="student_life" class="filter-chip">Student Life</button>
+          <button data-filter-category="city" class="filter-chip">City</button>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="filter-official-only" />
+          Official sources only
+        </label>
+      </div>
+
+      <div id="image-grid" class="image-grid" aria-live="polite"></div>
+
+      <div id="uncertain-note" class="uncertain-note" hidden>
+        <p id="uncertain-text"></p>
+        <button type="button" id="show-uncertain-btn" class="text-button">Show uncertain results</button>
+      </div>
+
+      <section class="sources-block">
+        <h3>Sources</h3>
+        <ul id="sources-list" class="sources-list"></ul>
+      </section>
+    </section>
+
+    <!-- ================= IMAGE DETAIL MODAL ================= -->
+    <div id="image-modal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-backdrop" data-action="close-modal"></div>
+      <div class="modal-content">
+        <button type="button" class="modal-close" data-action="close-modal" aria-label="Close">✕</button>
+        <img id="modal-image" alt="" />
+        <div class="modal-body">
+          <h3 id="modal-title"></h3>
+          <p class="modal-category" id="modal-category"></p>
+          <p class="modal-confidence" id="modal-confidence"></p>
+
+          <div class="modal-details-grid">
+            <div><span class="detail-label">Source</span><span id="modal-source"></span></div>
+            <div><span class="detail-label">Source domain</span><span id="modal-domain"></span></div>
+            <div><span class="detail-label">Published</span><span id="modal-published"></span></div>
+            <div><span class="detail-label">Retrieved</span><span id="modal-retrieved"></span></div>
+            <div><span class="detail-label">License</span><span id="modal-license"></span></div>
+          </div>
+
+          <a id="modal-source-link" href="#" target="_blank" rel="noopener" class="button-primary">Open original source ↗</a>
+
+          <h4>Why this image was accepted</h4>
+          <ul id="modal-explanation" class="explanation-list"></ul>
+
+          <h4>Verification signal breakdown</h4>
+          <ul id="modal-signals" class="signals-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= COMPARE VIEW ================= -->
+    <section id="view-compare" class="view" hidden>
+      <button type="button" class="text-button" data-action="back-home">← Back</button>
+      <h2>Compare universities</h2>
+      <div class="compare-pickers">
+        <div>
+          <label for="compare-select-a">University A</label>
+          <select id="compare-select-a"></select>
+        </div>
+        <div>
+          <label for="compare-select-b">University B</label>
+          <select id="compare-select-b"></select>
+        </div>
+        <button type="button" id="run-compare-btn">Compare</button>
+      </div>
+      <table id="compare-table" class="compare-table" hidden>
+        <thead>
+          <tr><th scope="col">Dimension</th><th scope="col" id="compare-col-a"></th><th scope="col" id="compare-col-b"></th></tr>
+        </thead>
+        <tbody id="compare-tbody"></tbody>
+      </table>
+      <p id="compare-empty" class="muted">Research at least two universities first, then compare them here.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>UniView AI shows only information it can trace to a real source. When evidence is missing, it says so.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
